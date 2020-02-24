@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="build card table" author="">
+        <createTable tableName="card">
+            <column name="card_id" type="varchar(16)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="total" type="integer">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="build employee table" author="">
+        <createTable tableName="employee">
+            <column name="employee_id" type="varchar(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="phone" type="varchar(11)">
+                <constraints nullable="false" />
+            </column>
+            <column name="pin" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="card_id" type="varchar(16)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="build role table" author="">
+        <createTable tableName="role">
+            <column name="role_id" type="serial" autoIncrement = "true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="type" type="varchar(50)">
+                <constraints unique="true" nullable="false" />
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="build employees_roles table" author="">
+        <createTable tableName="employees_roles">
+            <column name="employee_id" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="role_id" type="integer">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add foreign key constraint to card_id in employee table" author="">
+        <addForeignKeyConstraint baseTableName="employee" baseColumnNames="card_id" constraintName="fk_card_id" referencedTableName="card"
+                                 referencedColumnNames="card_id"/>
+    </changeSet>
+
+    <changeSet id="add foreign key constraint to employee_id in employees_roles table" author="">
+        <addForeignKeyConstraint baseTableName="employees_roles" baseColumnNames="employee_id" constraintName="fk_employee_id" referencedTableName="employee"
+                                 referencedColumnNames="employee_id"/>
+    </changeSet>
+
+    <changeSet id="add foreign key constraint to role_id in employees_roles table" author="">
+        <addForeignKeyConstraint baseTableName="employees_roles" baseColumnNames="role_id" constraintName="fk_role_id" referencedTableName="role"
+                                 referencedColumnNames="role_id"/>
+    </changeSet>
+
+</databaseChangeLog>
