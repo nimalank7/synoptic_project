@@ -2,11 +2,11 @@ package uk.first_catering.kiosk.card.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.first_catering.kiosk.ExceptionHandler.NotEnoughAmountException;
 import uk.first_catering.kiosk.card.model.Card;
-import uk.first_catering.kiosk.card.model.CardTopUpRequest;
+import uk.first_catering.kiosk.card.model.CardResponse;
 import uk.first_catering.kiosk.card.repository.CardRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,23 +27,36 @@ public class CardService {
         return card;
     }
 
-    public List<Card> findAll() {
-        return cardRepository.findAll();
+    public CardResponse saveCard(Card card) {
+        String message = "Your card has been created!";
+        cardRepository.save(card);
+        return createCardResponse(card, message);
     }
 
-    public Card saveCard(Card card) {
-        return cardRepository.save(card);
-    }
-
-    public Card topUpCard(CardTopUpRequest cardTopUpRequest) {
-
-        Card card = findById(cardTopUpRequest.getCardId());
-        int nextTotal = card.getTotal() + cardTopUpRequest.getAmount();
+    public CardResponse topUpCard(Card card, int amount) {
+        int nextTotal = card.getTotal() + amount;
         card.setTotal(nextTotal);
-        return cardRepository.save(card);
+        card = cardRepository.save(card);
+        String message = "You have topped up by " + amount;
+        return createCardResponse(card, message);
     }
 
-    public void deleteCard(Card card) {
-        cardRepository.delete(card);
+    public CardResponse pay(Card card, int amount) {
+
+        if (card.getTotal() < amount) {
+            throw new NotEnoughAmountException("Insufficent funds for this payment.");
+        }
+        int nextTotal = card.getTotal() - amount;
+        card.setTotal(nextTotal);
+        card = cardRepository.save(card);
+        String message = "You have paid: " + amount + ". Your remaining total is: " + card.getTotal();
+        return createCardResponse(card, message);
+    }
+
+    public CardResponse createCardResponse(Card card, String message) {
+        CardResponse cardResponse = new CardResponse();
+        cardResponse.setMessage(message);
+        cardResponse.setCard(card);
+        return cardResponse;
     }
 }

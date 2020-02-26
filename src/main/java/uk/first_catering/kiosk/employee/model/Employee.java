@@ -3,19 +3,14 @@ package uk.first_catering.kiosk.employee.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.first_catering.kiosk.card.model.Card;
-import uk.first_catering.kiosk.security.model.Role;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.List;
 
 @Entity
 @Table(name="employee")
@@ -36,18 +31,13 @@ public class Employee {
     private String phone;
 
     @Column(name="pin")
+    @JsonIgnore
     private String pin;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "card_id", referencedColumnName = "card_id")
-    @JsonProperty("card_id")
     @JsonIgnore
     private Card card;
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "employees_roles", joinColumns = @JoinColumn(name = "employee_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonIgnore
-    private List<Role> roles;
 
     public Employee() {
     }
@@ -84,10 +74,12 @@ public class Employee {
         this.phone = phone;
     }
 
+    @JsonIgnore
     public String getPin() {
         return pin;
     }
 
+    @JsonProperty
     public void setPin(String pin) {
         this.pin = pin;
     }
@@ -100,7 +92,15 @@ public class Employee {
         this.card = card;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "employeeId='" + employeeId + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", pin='" + pin + '\'' +
+                ", card=" + card.toString() +
+                '}';
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.first_catering.kiosk.employee.model.Employee;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -22,7 +23,7 @@ public class Card {
     @Column(name="total")
     private int total;
 
-    @OneToOne(mappedBy = "card")
+    @OneToOne(mappedBy = "card", cascade= CascadeType.ALL)
     @JsonIgnore
     private Employee employee;
 
@@ -51,5 +52,13 @@ public class Card {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "cardId='" + cardId + '\'' +
+                ", total=" + total +
+                '}';
     }
 }
